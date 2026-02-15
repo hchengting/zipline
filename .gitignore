@@ -48,3 +48,5 @@ uploads*/
 *.key
 .memory.log*
 openapi.json
+db/
+docker-compose.yml
