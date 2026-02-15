@@ -46,7 +46,7 @@ import {
   IconUpload,
   IconUsersGroup,
 } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ConfigProvider from './ConfigProvider';
 import VersionBadge from './VersionBadge';
 import { Link, useLoaderData } from 'react-router-dom';
@@ -164,6 +164,10 @@ export default function Layout() {
 
   const { user, mutate } = useLogin();
   const { avatar } = useAvatar();
+
+  useEffect(() => {
+    setOpened(false);
+  }, [location.pathname]);
 
   const copyToken = () => {
     modals.openConfirmModal({
