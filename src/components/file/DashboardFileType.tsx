@@ -217,7 +217,6 @@ export default function DashboardFileType({
             style={{
               cursor: allowZoom ? 'zoom-in' : 'default',
               maxWidth: '70vw',
-              maxHeight: '70vw',
             }}
             onClick={() => setOpen(true)}
           />

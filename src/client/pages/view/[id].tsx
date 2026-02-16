@@ -163,10 +163,10 @@ export default function ViewFileId() {
   ) : (
     <>
       <Center h='100%'>
-        <Paper m='md' p='md' shadow='md' radius='md' withBorder>
+        <Paper m='md' p='md' shadow='md' radius='md' withBorder style={{ maxWidth: '90vw' }}>
           <Group justify='space-between' mb='sm'>
             <Group>
-              <Text size='lg' fw={700} display='flex'>
+              <Text size='lg' fw={700} display='flex' style={{ overflowWrap: 'anywhere' }}>
                 {file.originalName ?? file.name}{' '}
               </Text>
               {user?.view!.showTags && (
