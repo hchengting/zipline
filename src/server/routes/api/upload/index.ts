@@ -270,7 +270,7 @@ export default typedPlugin(
           const { file, fileName, extension, mimetype, size, compressed, removedGps, originalName } = item;
 
           const data: Prisma.FileCreateInput = {
-            name: `${fileName}${extension}`,
+            name: fileName,
             size,
             type: mimetype,
             User: { connect: { id: req.user ? req.user.id : options.folder ? folder?.userId : undefined } },

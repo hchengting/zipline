@@ -313,7 +313,7 @@ export default typedPlugin(
           if (config.files.assumeMimetypes) response.assumedMimetypes![0] = assumed;
 
           const data: Prisma.FileCreateInput = {
-            name: `${fileName}${extension}`,
+            name: fileName,
             size: total,
             type: mimetype,
             User: {

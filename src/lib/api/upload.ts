@@ -87,11 +87,8 @@ export async function getFilename(
 
     if (!fileName) throw 'invalid file name';
 
-    const extensions = [...new Set([extension, ...alternateExtensions])];
-    let fullFileNames = extensions.map((ext) => `${fileName}${ext}`);
     let existing =
-      fullFileNames.some((name) => reservedNames?.has(name)) ||
-      (await prisma.file.findFirst({ where: { name: { in: fullFileNames } } }));
+      reservedNames?.has(fileName) || (await prisma.file.findFirst({ where: { name: fileName } }));
 
     if (existing && (override || format === 'name')) {
       throw 'file with the same name already exists';
@@ -103,13 +100,10 @@ export async function getFilename(
       fileName = formatFileName(format, originalName, dateIncrement++);
       if (!fileName) throw 'invalid file name';
 
-      fullFileNames = extensions.map((ext) => `${fileName}${ext}`);
-      existing =
-        fullFileNames.some((name) => reservedNames?.has(name)) ||
-        (await prisma.file.findFirst({ where: { name: { in: fullFileNames } } }));
+      existing = reservedNames?.has(fileName) || (await prisma.file.findFirst({ where: { name: fileName } }));
     }
 
-    for (const name of fullFileNames) reservedNames?.add(name);
+    reservedNames?.add(fileName);
     return fileName;
   } catch (e) {
     logger.warn(`error generating file name: ${e}`);
