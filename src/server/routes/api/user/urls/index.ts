@@ -6,7 +6,7 @@ import { Url, urlSchema, createUrlId, lockUrls, urlIdentifiersExist } from '@/li
 import { urls } from '@/lib/db/schema';
 import { containsText } from '@/lib/db/utils';
 import { log } from '@/lib/logger';
-import { randomCharacters } from '@/lib/random';
+import { generateUID } from '@/lib/random';
 import { RESERVED_ROUTES } from '@/lib/reservedRoutes';
 import { zStringTrimmed } from '@/lib/validation';
 import { onShorten } from '@/lib/webhooks';
@@ -97,10 +97,7 @@ export default typedPlugin(
           await lockUrls(tx);
           if (vanity && (await urlIdentifiersExist([vanity], tx))) throw new ApiError(1042);
 
-          let code: string;
-          do {
-            code = randomCharacters(config.urls.length);
-          } while (await urlIdentifiersExist([code], tx));
+          const code = await generateUID(config.urls.length);
           const id = await createUrlId(tx);
 
           const count = await tx.$count(urls, eq(urls.userId, req.user.id));
