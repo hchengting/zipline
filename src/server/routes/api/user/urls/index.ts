@@ -4,8 +4,8 @@ import { hashPassword } from '@/lib/crypto';
 import { prisma } from '@/lib/db';
 import { cleanUrlPasswords, Url, urlSchema } from '@/lib/db/models/url';
 import { log } from '@/lib/logger';
-import { randomCharacters } from '@/lib/random';
 import { RESERVED_ROUTES } from '@/lib/reservedRoutes';
+import { generateUID } from '@/lib/random';
 import { zStringTrimmed } from '@/lib/validation';
 import { onShorten } from '@/lib/webhooks';
 import { userMiddleware } from '@/server/middleware/user';
@@ -99,11 +99,7 @@ export default typedPlugin(
           if (existingVanity) throw new ApiError(1042);
         }
 
-        let code, existingCode;
-        do {
-          code = randomCharacters(config.urls.length);
-          existingCode = await prisma.url.findFirst({ where: { code } });
-        } while (existingCode);
+        const code = await generateUID(config.urls.length);
 
         const url = await prisma.$transaction(async (tx) => {
           await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${req.user.id} FOR UPDATE`;

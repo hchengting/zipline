@@ -83,7 +83,7 @@ export async function getFilename(
   alternateExtensions: string[] = [],
 ): Promise<string> {
   try {
-    let fileName = override ? sanitizeFilename(override) : formatFileName(format, originalName);
+    let fileName = override ? sanitizeFilename(override) : await formatFileName(format, originalName);
 
     if (!fileName) throw 'invalid file name';
 
@@ -97,7 +97,7 @@ export async function getFilename(
     let dateIncrement = 1;
 
     while (existing && (format === 'random' || format === 'date')) {
-      fileName = formatFileName(format, originalName, dateIncrement++);
+      fileName = await formatFileName(format, originalName, dateIncrement++);
       if (!fileName) throw 'invalid file name';
 
       existing = reservedNames?.has(fileName) || (await prisma.file.findFirst({ where: { name: fileName } }));

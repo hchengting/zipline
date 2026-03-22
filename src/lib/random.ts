@@ -1,3 +1,5 @@
+import { prisma } from '@/lib/db';
+
 const CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 const CHARSET_LENGTH = CHARSET.length;
 const MAX = 256 - (256 % CHARSET_LENGTH);
@@ -37,4 +39,17 @@ export function randomIndex(length: number) {
   getRandomValues(randomValues);
 
   return randomValues[0] % length;
+}
+
+export async function generateUID(length: number) {
+  const id = randomCharacters(length);
+
+  if (
+    (await prisma.url.findFirst({ where: { OR: [{ code: id }, { vanity: id }] } })) ||
+    (await prisma.file.findFirst({ where: { name: id } }))
+  ) {
+    return generateUID(length);
+  }
+
+  return id;
 }
