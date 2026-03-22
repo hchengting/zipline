@@ -4,7 +4,7 @@ import { parse } from 'path';
 import { config } from '../config';
 import { Config } from '../config/validate';
 import { sanitizeFilename } from '../fs';
-import { randomCharacters } from '../random';
+import { generateUID } from '../random';
 import { randomWords } from './randomWords';
 
 export function formatFileName(
@@ -14,7 +14,7 @@ export function formatFileName(
 ) {
   switch (nameFormat) {
     case 'random':
-      return randomCharacters(config.files.length);
+      return generateUID(config.files.length);
     case 'date':
       return dayjs().format(config.files.defaultDateFormat) + (dateIncrement ? `-${dateIncrement}` : '');
     case 'uuid':
@@ -30,6 +30,6 @@ export function formatFileName(
     case 'gfycat':
       return randomWords(config.files.randomWordsNumAdjectives, config.files.randomWordsSeparator);
     default:
-      return randomCharacters(config.files.length);
+      return generateUID(config.files.length);
   }
 }

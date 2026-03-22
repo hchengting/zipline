@@ -1,3 +1,7 @@
+import { db } from '@/lib/db';
+import { urls, files } from '@/lib/db/schema';
+import { eq, or } from 'drizzle-orm';
+
 const CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 const CHARSET_LENGTH = CHARSET.length;
 const MAX = 256 - (256 % CHARSET_LENGTH);
@@ -37,4 +41,22 @@ export function randomIndex(length: number) {
   getRandomValues(randomValues);
 
   return randomValues[0] % length;
+}
+
+export async function generateUID(length: number) {
+  while (true) {
+    const id = randomCharacters(length);
+
+    const [url] = await db
+      .select({ id: urls.id })
+      .from(urls)
+      .where(or(eq(urls.code, id), eq(urls.vanity, id)))
+      .limit(1);
+    if (url) continue;
+
+    const [file] = await db.select({ id: files.id }).from(files).where(eq(files.name, id)).limit(1);
+    if (file) continue;
+
+    return id;
+  }
 }

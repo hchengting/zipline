@@ -6,8 +6,8 @@ import { Url, urlSchema } from '@/lib/db/models/url';
 import { urls, users } from '@/lib/db/schema';
 import { containsText } from '@/lib/db/utils';
 import { log } from '@/lib/logger';
-import { randomCharacters } from '@/lib/random';
 import { RESERVED_ROUTES } from '@/lib/reservedRoutes';
+import { generateUID } from '@/lib/random';
 import { zStringTrimmed } from '@/lib/validation';
 import { onShorten } from '@/lib/webhooks';
 import { userMiddleware } from '@/server/middleware/user';
@@ -98,12 +98,7 @@ export default typedPlugin(
           if (vanityCount > 0) throw new ApiError(1042);
         }
 
-        let code, existingCode;
-        do {
-          code = randomCharacters(config.urls.length);
-          const codeCount = await db.$count(urls, eq(urls.code, code));
-          existingCode = codeCount > 0;
-        } while (existingCode);
+        const code = await generateUID(config.urls.length);
 
         const url = await db.transaction(async (tx) => {
           await tx.select({ id: users.id }).from(users).where(eq(users.id, req.user.id)).for('update');
