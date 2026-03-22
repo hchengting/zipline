@@ -97,20 +97,18 @@ async function fileNamesExist(names: string[]) {
 export async function getFilename(
   format: Config['files']['defaultFormat'],
   originalName: string,
-  extension: string,
+  _extension: string,
   override?: string,
   reservedNames?: Set<string>,
-  alternateExtensions: string[] = [],
+  _alternateExtensions: string[] = [],
 ): Promise<string> {
   try {
     let fileName = override ? sanitizeFilename(override) : formatFileName(format, originalName);
 
     if (!fileName) throw 'invalid file name';
 
-    const extensions = [...new Set([extension, ...alternateExtensions])];
-    let fullFileNames = extensions.map((ext) => `${fileName}${ext}`);
     let existing =
-      fullFileNames.some((name) => reservedNames?.has(name)) || (await fileNamesExist(fullFileNames));
+      reservedNames?.has(fileName) || (await fileNamesExist([fileName]));
 
     if (existing && (override || format === 'name')) {
       throw 'file with the same name already exists';
@@ -122,12 +120,10 @@ export async function getFilename(
       fileName = formatFileName(format, originalName, dateIncrement++);
       if (!fileName) throw 'invalid file name';
 
-      fullFileNames = extensions.map((ext) => `${fileName}${ext}`);
-      existing =
-        fullFileNames.some((name) => reservedNames?.has(name)) || (await fileNamesExist(fullFileNames));
+      existing = reservedNames?.has(fileName) || (await fileNamesExist([fileName]));
     }
 
-    for (const name of fullFileNames) reservedNames?.add(name);
+    reservedNames?.add(fileName);
     return fileName;
   } catch (e) {
     logger.warn(`error generating file name: ${e}`);

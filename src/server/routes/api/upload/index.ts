@@ -270,7 +270,7 @@ export default typedPlugin(
           const { file, fileName, extension, mimetype, size, compressed, removedGps, originalName } = item;
 
           const data: FileInsert = {
-            name: `${fileName}${extension}`,
+            name: fileName,
             size,
             type: mimetype,
             userId: req.user ? req.user.id : options.folder ? folder?.userId : undefined,

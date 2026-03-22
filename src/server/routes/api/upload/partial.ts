@@ -194,7 +194,7 @@ export default typedPlugin(
           if (config.files.assumeMimetypes) response.assumedMimetypes![0] = assumed;
 
           const data: FileInsert = {
-            name: `${fileName}${extension}`,
+            name: fileName,
             size: total,
             type: mimetype,
             userId: req.user ? req.user.id : options.folder ? folder?.userId : undefined,
