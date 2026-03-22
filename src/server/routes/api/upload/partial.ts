@@ -227,7 +227,7 @@ export default typedPlugin(
 
             const [created] = await tx
               .insert(files)
-              .values({ ...data, name: `${fileName}${extension}` })
+              .values({ ...data, name: fileName })
               .returning(uploadFileColumns);
             if (!created) throw new ApiError(9005);
 

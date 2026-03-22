@@ -95,7 +95,7 @@ async function fileNameExists(name: string, client: DbClient) {
 export async function getFilename(
   format: Config['files']['defaultFormat'],
   originalName: string,
-  extension: string,
+  _extension: string,
   override?: string,
   client: DbClient = db,
 ): Promise<string> {
@@ -104,7 +104,7 @@ export async function getFilename(
 
     if (!fileName) throw 'invalid file name';
 
-    let existing = await fileNameExists(`${fileName}${extension}`, client);
+    let existing = await fileNameExists(fileName, client);
 
     if (existing && (override || format === 'name')) {
       throw 'file with the same name already exists';
@@ -116,11 +116,10 @@ export async function getFilename(
       fileName = formatFileName(format, originalName, dateIncrement++);
       if (!fileName) throw 'invalid file name';
 
-      existing = await fileNameExists(`${fileName}${extension}`, client);
+      existing = await fileNameExists(fileName, client);
     }
 
-    if (`${fileName}${extension}`.toLowerCase().startsWith('.thumbnail'))
-      throw 'file name uses a reserved prefix';
+    if (fileName.toLowerCase().startsWith('.thumbnail')) throw 'file name uses a reserved prefix';
 
     return fileName;
   } catch (e) {
