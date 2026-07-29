@@ -87,8 +87,9 @@ export default function DashboardFileType({
 
   const { fileUrl, thumbnailUrl, viewUrl } = useFileUrls({ file, token });
   const db = isDbFile(file) ? file : null;
+  const fileName = db?.originalName ?? file.name;
 
-  const extension = file.name.split('.').pop() || '';
+  const extension = fileName.split('.').pop() || '';
   const renderIn = renderMode(extension);
   const type = code ? 'text' : file.type.split('/')[0];
 
@@ -108,18 +109,18 @@ export default function DashboardFileType({
   }, [zoomOpen]);
 
   if (disableMediaPreview && !show) {
-    return <Placeholder text={`Click to view file ${file.name}`} Icon={fileIcon(file.type)} />;
+    return <Placeholder text={`Click to view file ${fileName}`} Icon={fileIcon(file.type)} />;
   }
 
   if (db?.password === true && !show) {
-    return <Placeholder text={`Click to view protected ${file.name}`} Icon={IconShieldLockFilled} />;
+    return <Placeholder text={`Click to view protected ${fileName}`} Icon={IconShieldLockFilled} />;
   }
 
   if (db?.password === true && show) {
     return (
       <Paper withBorder p='xs' style={{ cursor: 'pointer' }}>
         <Placeholder
-          text={`Click to view protected ${file.name}`}
+          text={`Click to view protected ${fileName}`}
           Icon={IconShieldLockFilled}
           onClick={() => window.open(viewUrl!)}
         />
@@ -127,7 +128,7 @@ export default function DashboardFileType({
     );
   }
 
-  const isAsciicast = file.type === 'application/x-asciicast' || file.name.endsWith('.cast');
+  const isAsciicast = file.type === 'application/x-asciicast' || fileName.endsWith('.cast');
 
   if (type === 'video') {
     if (!fileUrl) return <Loader />;
@@ -136,7 +137,7 @@ export default function DashboardFileType({
       if (thumbnailUrl) {
         return (
           <Box pos='relative'>
-            <MantineImage src={thumbnailUrl} alt={file.name || 'Video thumbnail'} />
+            <MantineImage src={thumbnailUrl} alt={fileName || 'Video thumbnail'} />
             <Center pos='absolute' inset={0}>
               <IconPlayerPlay
                 size='4rem'
@@ -148,7 +149,7 @@ export default function DashboardFileType({
         );
       }
 
-      return <Placeholder text={`Click to play video ${file.name}`} Icon={fileIcon(file.type)} />;
+      return <Placeholder text={`Click to play video ${fileName}`} Icon={fileIcon(file.type)} />;
     }
 
     const video = (
@@ -179,13 +180,13 @@ export default function DashboardFileType({
     if (!fileUrl) return <Loader />;
 
     if (!show) {
-      return <MantineImage fit='contain' mah={400} src={fileUrl} alt={file.name || 'Image'} />;
+      return <MantineImage fit='contain' mah={400} src={fileUrl} alt={fileName || 'Image'} />;
     }
 
     const image = (
       <MantineImage
         src={fileUrl}
-        alt={file.name || 'Image'}
+        alt={fileName || 'Image'}
         fit='contain'
         style={{
           cursor: allowZoom ? 'zoom-in' : 'default',
@@ -210,7 +211,7 @@ export default function DashboardFileType({
           <FileZoomModal setOpen={setZoomOpen}>
             <MantineImage
               src={fileUrl}
-              alt={file.name || 'Image'}
+              alt={fileName || 'Image'}
               style={{
                 maxWidth: '95vw',
                 maxHeight: '95vh',
@@ -230,12 +231,12 @@ export default function DashboardFileType({
     return show ? (
       <audio autoPlay muted={mediaAutoMuted} controls style={{ width: '100%' }} src={fileUrl} />
     ) : (
-      <Placeholder text={`Click to play audio ${file.name}`} Icon={fileIcon(file.type)} />
+      <Placeholder text={`Click to play audio ${fileName}`} Icon={fileIcon(file.type)} />
     );
   }
 
   if (type === 'text') {
-    if (!show) return <Placeholder text={`Click to view text ${file.name}`} Icon={fileIcon(file.type)} />;
+    if (!show) return <Placeholder text={`Click to view text ${fileName}`} Icon={fileIcon(file.type)} />;
 
     if (fileContent.trim() === '') {
       return (
@@ -278,7 +279,7 @@ export default function DashboardFileType({
       </FullscreenFrame>
     ) : (
       <Placeholder
-        text={`Click to download asciinema cast ${file.name}`}
+        text={`Click to download asciinema cast ${fileName}`}
         Icon={fileIcon('application/x-asciicast')}
       />
     );
@@ -295,17 +296,17 @@ export default function DashboardFileType({
         <Pdf src={fileUrl} />
       )
     ) : (
-      <Placeholder text={`Click to view PDF ${file.name}`} Icon={fileIcon(file.type)} />
+      <Placeholder text={`Click to view PDF ${fileName}`} Icon={fileIcon(file.type)} />
     );
   }
 
-  if (!show) return <Placeholder text={`Click to view file ${file.name}`} Icon={fileIcon(file.type)} />;
+  if (!show) return <Placeholder text={`Click to view file ${fileName}`} Icon={fileIcon(file.type)} />;
 
   return (
     <Paper withBorder p='xs' style={{ cursor: 'pointer' }}>
       <Placeholder
         onClick={() => window.open(fileUrl)}
-        text={`Click to view file ${file.name} in a new tab`}
+        text={`Click to view file ${fileName} in a new tab`}
         Icon={fileIcon(file.type)}
       />
     </Paper>
