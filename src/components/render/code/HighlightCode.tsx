@@ -28,7 +28,6 @@ export default function HighlightCode({
   const lines = sanitize.sanitize(code, { USE_PROFILES: { html: true } }).split('\n');
   const isExpandable = !noClamp && lines.length > 50;
   const totalCount = isExpandable && !expanded ? 50 : lines.length;
-  const estimatedHeight = Math.min(totalCount * 24, 400);
 
   const lang = useMemo(() => {
     if (!hljs) return 'plaintext';
@@ -75,7 +74,17 @@ export default function HighlightCode({
   );
 
   return (
-    <Paper withBorder p='xs' my='md' pos='relative' style={{ overflow: 'hidden' }}>
+    <Paper
+      withBorder
+      p='xs'
+      my='md'
+      pos='relative'
+      style={{
+        width: noClamp ? undefined : '80vw',
+        height: noClamp ? undefined : '80vh',
+        overflow: 'hidden',
+      }}
+    >
       <CopyButton value={code}>
         {({ copied, copy }) => (
           <ActionIcon
@@ -94,7 +103,7 @@ export default function HighlightCode({
         )}
       </CopyButton>
 
-      <div style={{ height: noClamp ? undefined : estimatedHeight, overflowX: 'auto' }}>
+      <div style={{ height: noClamp ? undefined : '100%', overflowX: 'auto' }}>
         <Virtuoso
           useWindowScroll={!!noClamp && !scrollParent}
           customScrollParent={scrollParent ?? undefined}
